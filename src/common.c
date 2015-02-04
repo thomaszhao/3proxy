@@ -12,6 +12,11 @@
 #include "proxy.h"
 
 
+#ifdef THREE_POROXY_JNI
+#include "jni_common.h"
+#endif
+
+
 char * copyright = COPYRIGHT;
 
 int randomizer = 1;
@@ -435,6 +440,11 @@ int dobuf2(struct clientparam * param, unsigned char * buf, const unsigned char 
 				 sprintf((char *)buf+i, "%.05d", param->res);
 				 i += 5;
 				 break;
+#ifdef THREE_POROXY_JNI
+				case 's':
+				 i += sprintf((char *)buf+i, "%4d", param->status);
+				 break;
+#endif
 				case 'T':
 				 if(s){
 					for(len = 0; i<4000 && s[len]; len++){
@@ -548,7 +558,11 @@ int dobuf(struct clientparam * param, unsigned char * buf, const unsigned char *
 	if(!param) return 0;
 	if(param->trafcountfunc)(*param->trafcountfunc)(param);
 	format = (char *)param->srv->logformat;
+#ifdef THREE_POROXY_JNI
+	if(!format) format = "G%y%m%d%H%M%S.%. %p %E %s %U %C:%c %R:%r %O %I %h %T";
+#else
 	if(!format) format = "G%y%m%d%H%M%S.%. %p %E %U %C:%c %R:%r %O %I %h %T";
+#endif
 	tm = (*format == 'G' || *format == 'g')?
 		gmtime(&t) : localtime(&t);
 	i = dobuf2(param, buf, s, doublec, tm, format + 1);
@@ -598,6 +612,13 @@ int doconnect(struct clientparam * param){
 	if(!param->sins.sin_port)param->sins.sin_port = param->req.sin_port;
 	if ((param->remsock=so._socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) {return (11);}
 	so._setsockopt(param->remsock, SOL_SOCKET, SO_LINGER, (unsigned char *)&lg, sizeof(lg));
+
+#ifdef THREE_POROXY_JNI_VPNSERVICE
+	if(!java_protect(param->remsock)) {
+		return (16);
+	}
+#endif
+
 	memset(&bindsa, 0, sizeof(bindsa));
 	bindsa.sin_family = AF_INET;
 	bindsa.sin_port = param->extport;

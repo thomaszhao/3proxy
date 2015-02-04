@@ -195,6 +195,21 @@ void mysigterm (int sig){
 	conf.timetoexit = 1;
 }
 
+#ifdef THREE_POROXY_JNI
+void mysigterm_nonblock (int sig){
+	conf.paused++;
+//	usleep(999*SLEEPTIME);
+//	usleep(999*SLEEPTIME);
+#ifndef NOODBC
+	pthread_mutex_lock(&odbc_mutex);
+	close_sql();
+	pthread_mutex_unlock(&odbc_mutex);
+#endif
+	conf.timetoexit = 1;
+}
+#endif // THREE_POROXY_JNI
+
+
 #endif
 
 void dumpmem(void);
@@ -1833,6 +1848,12 @@ int readconfig(FILE * fp){
 }
 
 
+#ifdef THREE_POROXY_JNI
+
+int run_3proxy_main(int argc, char * argv[])
+{
+
+#else
 #ifndef _WINCE
 int main(int argc, char * argv[]) {
 #else
@@ -1842,6 +1863,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int 
  WNDCLASS wc;
  HWND hwnd = 0;
 #endif
+
+#endif   // THREE_POROXY_JNI
 
   int res = 0;
   FILE * fp = NULL;
