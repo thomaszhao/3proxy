@@ -8,6 +8,8 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_CFLAGS := -Wall -g -O2 -c -pthread -DGETHOSTBYNAME_R -D_THREAD_SAFE -D_REENTRANT -DNOODBC -DWITH_STD_MALLOC -DFD_SETSIZE=4096 -DWITH_POLL -DMODULEMAINFUNC=mainfunc 
 LOCAL_CFLAGS += -DTHREE_POROXY_JNI -DTAG=\"3proxy\" -DANONYMOUS
+# JNI_CLASS_PREFIX should match your java packet-class.
+LOCAL_CFLAGS += -DJNI_CLASS_PREFIX=Java_com_chinacache_mop_jni_ThreeProxy_
 
 LOCAL_LDFLAGS :=  -ldl  -Wall -O2 -pthread -llog
 

@@ -6,7 +6,7 @@
 #include <jni.h>
 #include <string.h>
 #include <unistd.h>
-
+#include "jni_common.h"
 
 typedef unsigned short char16_t;
 
@@ -66,7 +66,7 @@ void JNI_OnUnload(JavaVM* vm, void* reserved)
 
 
 // Wrapper for main()
-jint Java_cn_thomaszhao_jni_ThreeProxy_RunThreeProxy(JNIEnv *env,
+jint JNI_FUNC_NAME(RunThreeProxy)(JNIEnv *env,
 		jobject thiz, jobjectArray argv) {
 
 	int argc = argv ? env->GetArrayLength(argv) : 0;
@@ -99,13 +99,13 @@ jint Java_cn_thomaszhao_jni_ThreeProxy_RunThreeProxy(JNIEnv *env,
 }
 
 
-void Java_cn_thomaszhao_jni_ThreeProxy_Reload(JNIEnv *env,
+void JNI_FUNC_NAME(Reload)(JNIEnv *env,
 		jobject thiz) {
 
 	mysigusr1(10);
 }
 
-void Java_cn_thomaszhao_jni_ThreeProxy_Terminate(JNIEnv *env,
+void JNI_FUNC_NAME(Terminate)(JNIEnv *env,
 		jobject thiz) {
 	mysigterm_nonblock(15);
 }
